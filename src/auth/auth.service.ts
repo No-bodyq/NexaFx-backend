@@ -25,6 +25,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SignupDto } from './dto/signup.dto';
 import { VerifySignupOtpDto } from './dto/verify-signup-otp.dto';
 import { VerifySignupResponseDto } from './dto/signup-response.dto';
+import { AuthUserResponseDto, VerifyLoginOtpResponseDto } from './dto/signup-response.dto';
 import { VerifyTwoFactorDto } from './dto/verify-2fa.dto';
 import { JwtPayload } from './strategies/jwt.strategy';
 import { AuditLogsService } from '../audit-logs/audit-logs.service';
@@ -659,22 +660,23 @@ export class AuthService {
     return decoded.sub;
   }
 
-  private async issueAuthTokens(userId: string, email: string, role: string) {
+  private async issueAuthTokens(userId: string, email: string, role: string): Promise<VerifyLoginOtpResponseDto> {
     const user = await this.usersService.findById(userId);
     const payload = { sub: userId, email, role };
+    const authUser: AuthUserResponseDto = {
+      id: userId,
+      email,
+      firstName: user?.firstName ?? null,
+      lastName: user?.lastName ?? null,
+      name: `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim(),
+      role: role as any,
+      walletPublicKey: user?.walletPublicKey ?? null,
+    };
     return {
       accessToken: this.jwtService.sign(payload),
       refreshToken: await this.refreshTokensService.createRefreshToken(userId),
       expiresIn: this.getAccessTokenExpirySeconds(),
-      user: {
-        id: userId,
-        email,
-        firstName: user?.firstName ?? null,
-        lastName: user?.lastName ?? null,
-        name: `${user?.firstName ?? ''} ${user?.lastName ?? ''}`.trim(),
-        role,
-        walletPublicKey: user?.walletPublicKey ?? null,
-      },
+      user: authUser,
     };
   }
 }
