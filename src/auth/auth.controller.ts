@@ -18,6 +18,7 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SignupDto } from './dto/signup.dto';
 import { VerifySignupOtpDto } from './dto/verify-signup-otp.dto';
 import { VerifySignupResponseDto } from './dto/signup-response.dto';
+import { VerifyLoginOtpResponseDto } from './dto/signup-response.dto';
 import { Throttle } from '@nestjs/throttler';
 // import { ConfigService } from '@nestjs/config';
 
@@ -63,18 +64,8 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description:
-      'OTP verified. Either tokens are issued directly or a 2FA challenge is returned',
-    schema: {
-      type: 'object',
-      properties: {
-        requiresTwoFactor: { type: 'boolean' },
-        twoFactorToken: { type: 'string' },
-        message: { type: 'string' },
-        accessToken: { type: 'string' },
-        refreshToken: { type: 'string' },
-        expiresIn: { type: 'number' },
-      },
-    },
+      'OTP verified. Returns full auth tokens + user object (including name) when no 2FA is required, or a twoFactorToken challenge when 2FA is enabled.',
+    type: VerifyLoginOtpResponseDto,
   })
   @ApiResponse({ status: 401, description: 'Invalid or expired OTP' })
   @ApiResponse({ status: 400, description: 'Invalid request body' })
@@ -91,15 +82,8 @@ export class AuthController {
   @ApiBody({ type: VerifyTwoFactorDto })
   @ApiResponse({
     status: 200,
-    description: '2FA verified successfully, tokens issued',
-    schema: {
-      type: 'object',
-      properties: {
-        accessToken: { type: 'string' },
-        refreshToken: { type: 'string' },
-        expiresIn: { type: 'number' },
-      },
-    },
+    description: '2FA verified. Returns full auth tokens + user object (including name).',
+    type: VerifyLoginOtpResponseDto,
   })
   @ApiResponse({
     status: 401,
