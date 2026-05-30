@@ -18,6 +18,7 @@ import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { FirebaseModule } from '../firebase/firebase.module';
 import { WebhooksModule } from '../webhooks/webhooks.module';
 import { CommonModule } from '../common/common.module';
+import { TransactionLimitsModule } from './transaction-limits.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CommonModule } from '../common/common.module';
     FirebaseModule,
     WebhooksModule,
     CommonModule,
+    TransactionLimitsModule,
   ],
   controllers: [TransactionsController],
   providers: [TransactionsService, TransactionVerificationService],

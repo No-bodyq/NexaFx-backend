@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { UserQueryDto } from './dto/user-query.dto';
 import { OverrideTransactionDto } from './dto/override-transaction.dto';
+import { TransactionLimitService } from '../transactions/services/transaction-limit.service';
 
 describe('AdminService', () => {
   let service: AdminService;
@@ -125,6 +126,13 @@ describe('AdminService', () => {
           useValue: {
             logAuthEvent: jest.fn(),
             logTransactionEvent: jest.fn(),
+          },
+        },
+        {
+          provide: TransactionLimitService,
+          useValue: {
+            listLimits: jest.fn(),
+            upsertLimit: jest.fn(),
           },
         },
       ],

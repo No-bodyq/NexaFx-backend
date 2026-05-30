@@ -7,12 +7,14 @@ import { Transaction } from '../transactions/entities/transaction.entity';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { ReportsModule } from './reports/reports.module';
 import { DataRequest } from '../users/entities/data-request.entity';
+import { TransactionLimitsModule } from '../transactions/transaction-limits.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Transaction, DataRequest]),
     AuditLogsModule,
     ReportsModule,
+    TransactionLimitsModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],
