@@ -15,10 +15,12 @@ export class AddKycTierAndTransactionLimits1761000000000
       )
     `);
 
-    await queryRunner.query(`
-      ALTER TABLE "users"
-      ADD COLUMN "kycTier" "public"."users_kyctier_enum" NOT NULL DEFAULT 'UNVERIFIED'
-    `);
+    if (await queryRunner.hasTable('users')) {
+      await queryRunner.query(`
+        ALTER TABLE "users"
+        ADD COLUMN "kycTier" "public"."users_kyctier_enum" NOT NULL DEFAULT 'UNVERIFIED'
+      `);
+    }
 
     await queryRunner.query(`
       CREATE TABLE "transaction_limits" (
@@ -44,8 +46,10 @@ export class AddKycTierAndTransactionLimits1761000000000
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP TABLE "transaction_limits"');
-    await queryRunner.query('ALTER TABLE "users" DROP COLUMN "kycTier"');
-    await queryRunner.query('DROP TYPE "public"."users_kyctier_enum"');
+    await queryRunner.query('DROP TABLE IF EXISTS "transaction_limits"');
+    if (await queryRunner.hasTable('users')) {
+      await queryRunner.query('ALTER TABLE "users" DROP COLUMN IF EXISTS "kycTier"');
+    }
+    await queryRunner.query('DROP TYPE IF EXISTS "public"."users_kyctier_enum"');
   }
 }
