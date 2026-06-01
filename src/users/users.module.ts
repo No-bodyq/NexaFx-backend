@@ -18,6 +18,7 @@ import { BlockchainModule } from '../blockchain/blockchain.module';
 import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
 import { TokensModule } from '../tokens/tokens.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { TransactionLimitsModule } from '../transactions/transaction-limits.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     ExchangeRatesModule,
     TokensModule,
     NotificationsModule,
+    TransactionLimitsModule,
   ],
   controllers: [UsersController],
   providers: [

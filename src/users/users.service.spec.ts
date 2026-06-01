@@ -3,7 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ThrottlerStorageService } from '@nestjs/throttler';
 import { UsersService } from './users.service';
-import { User, UserRole, UserPlan } from './user.entity';
+import { User, UserRole, UserPlan, UserKycTier } from './user.entity';
 import { RateLimitConfig } from './rate-limit-config.entity';
 import { StellarService } from '../blockchain/stellar/stellar.service';
 import { ExchangeRatesService } from '../exchange-rates/exchange-rates.service';
@@ -27,6 +27,7 @@ describe('UsersService', () => {
     referralCode: 'ABC12345',
     referredBy: null,
     isVerified: true,
+    kycTier: UserKycTier.ENHANCED,
     isSuspended: false,
     isTwoFactorEnabled: false,
     role: UserRole.USER,

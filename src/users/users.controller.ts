@@ -30,6 +30,7 @@ import {
 } from './dto';
 import { DataExportService } from './services/data-export.service';
 import { AccountDeletionService } from './services/account-deletion.service';
+import { TransactionLimitService } from '../transactions/services/transaction-limit.service';
 
 @ApiTags('Users')
 @Controller('users')
@@ -39,6 +40,7 @@ export class UsersController {
     private readonly usersService: UsersService,
     private readonly dataExportService: DataExportService,
     private readonly accountDeletionService: AccountDeletionService,
+    private readonly transactionLimitService: TransactionLimitService,
   ) {}
 
   @Get('profile')
@@ -254,5 +256,17 @@ export class UsersController {
     @Request() req: { user: { userId: string } },
   ): Promise<RateLimitStatusDto> {
     return this.usersService.getRateLimitStatus(req.user.userId);
+  }
+
+  @Get('me/transaction-limits')
+  @ApiOperation({ summary: 'Get current user KYC-based transaction limits' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns user tier, configured limits, and current usage',
+  })
+  async getTransactionLimits(
+    @Request() req: { user: { userId: string } },
+  ): Promise<Record<string, unknown>> {
+    return this.transactionLimitService.getUserLimitStatus(req.user.userId);
   }
 }

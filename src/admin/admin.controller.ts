@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Post,
   Patch,
   Param,
   Body,
@@ -30,8 +31,13 @@ import { UpdateUserPlanDto } from './dto/update-user-plan.dto';
 import { AdminTransactionQueryDto } from './dto/admin-transaction-query.dto';
 import { MetricsQueryDto } from './dto/metrics-query.dto';
 import { OverrideTransactionDto } from './dto/override-transaction.dto';
+import {
+  PatchTransactionLimitDto,
+  UpsertTransactionLimitDto,
+} from './dto/transaction-limit.dto';
 import { Response } from 'express';
 import { join } from 'path';
+import { UserKycTier } from '../users/user.entity';
 
 @ApiTags('Admin')
 @ApiBearerAuth()
@@ -255,6 +261,27 @@ export class AdminController {
       overrideDto,
       admin.userId,
     );
+  }
+
+  @Get('transaction-limits')
+  @ApiOperation({ summary: 'List KYC tier transaction limits (Admin only)' })
+  async listTransactionLimits() {
+    return this.adminService.listTransactionLimits();
+  }
+
+  @Post('transaction-limits')
+  @ApiOperation({ summary: 'Create or replace KYC tier transaction limit' })
+  async upsertTransactionLimit(@Body() dto: UpsertTransactionLimitDto) {
+    return this.adminService.upsertTransactionLimit(dto);
+  }
+
+  @Patch('transaction-limits/:tier')
+  @ApiOperation({ summary: 'Update KYC tier transaction limit' })
+  async patchTransactionLimit(
+    @Param('tier') tier: UserKycTier,
+    @Body() dto: PatchTransactionLimitDto,
+  ) {
+    return this.adminService.patchTransactionLimit(tier, dto);
   }
 
   @Get('kyc-file/:userId/:version/:filename')

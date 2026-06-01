@@ -27,6 +27,7 @@ import { FirebaseService } from '../../firebase/firebase.service';
 import { WebhookService } from '../../webhooks/services/webhook.service';
 import { BeneficiariesService } from '../../beneficiaries/beneficiaries.service';
 import { LedgerService } from '../../ledger/services/ledger.service';
+import { TransactionLimitService } from './transaction-limit.service';
 
 // Mock Stellar SDK components
 jest.mock('stellar-sdk', () => {
@@ -184,6 +185,10 @@ describe('TransactionsService.createSwap', () => {
         },
         { provide: BeneficiariesService, useValue: {} },
         { provide: LedgerService, useValue: ledgerService },
+        {
+          provide: TransactionLimitService,
+          useValue: { check: jest.fn(async () => undefined) },
+        },
       ],
     }).compile();
 

@@ -16,6 +16,7 @@ import { Notification } from '../notifications/entities/notification.entity';
 import { NotificationType } from '../notifications/entities/notification.entity';
 import { NotificationStatus } from '../notifications/entities/notification.entity';
 import { FirebaseService } from '../firebase/firebase.service';
+import { UserKycTier } from '../users/user.entity';
 
 @Injectable()
 export class KycService {
@@ -179,10 +180,17 @@ export class KycService {
 
       if (decision === KycStatus.APPROVED) {
         kyc.status = KycStatus.APPROVED;
-        kyc.tier = 2;
+        const tier = this.resolveUserKycTier(kyc);
+        kyc.tier =
+          tier === UserKycTier.BASIC
+            ? KycTier.TIER_1
+            : tier === UserKycTier.UNVERIFIED
+              ? KycTier.TIER_0
+              : KycTier.TIER_2;
         kyc.reviewedAt = new Date();
 
         user.isVerified = true;
+        user.kycTier = tier;
 
         notificationPayload = {
           userId: user.id,
@@ -195,7 +203,7 @@ export class KycService {
           metadata: {
             entity: 'KYC',
             kycStatus: 'approved',
-            tier: 2,
+            tier,
           },
         };
       } else {
@@ -204,6 +212,7 @@ export class KycService {
         kyc.reviewedAt = new Date();
 
         user.isVerified = false;
+  user.kycTier = UserKycTier.UNVERIFIED;
 
         notificationPayload = {
           userId: user.id,
@@ -244,5 +253,22 @@ export class KycService {
         message: `KYC ${decision} successfully`,
       };
     });
+  }
+
+  private resolveUserKycTier(kyc: KycRecord): UserKycTier {
+    const hasId = !!kyc.documentFrontUrl;
+    const hasSelfie = !!kyc.selfieUrl;
+    const hasProofOfAddress = !!kyc.documentBackUrl;
+
+    if (hasId && hasSelfie && hasProofOfAddress) {
+      return UserKycTier.FULL;
+    }
+    if (hasId && hasSelfie) {
+      return UserKycTier.ENHANCED;
+    }
+    if (hasId) {
+      return UserKycTier.BASIC;
+    }
+    return UserKycTier.UNVERIFIED;
   }
 }

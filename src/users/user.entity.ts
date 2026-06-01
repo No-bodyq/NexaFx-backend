@@ -24,6 +24,13 @@ export enum UserPlan {
   ENTERPRISE = 'ENTERPRISE',
 }
 
+export enum UserKycTier {
+  UNVERIFIED = 'UNVERIFIED',
+  BASIC = 'BASIC',
+  ENHANCED = 'ENHANCED',
+  FULL = 'FULL',
+}
+
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -78,6 +85,13 @@ export class User {
 
   @Column({ type: 'boolean', default: false })
   isVerified: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: UserKycTier,
+    default: UserKycTier.UNVERIFIED,
+  })
+  kycTier: UserKycTier;
 
   @Column({ type: 'boolean', default: false })
   isSuspended: boolean;

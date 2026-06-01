@@ -43,6 +43,12 @@ import {
   DataRequestStatus,
 } from '../users/entities/data-request.entity';
 import { UpdateUserPlanDto } from './dto/update-user-plan.dto';
+import { TransactionLimitService } from '../transactions/services/transaction-limit.service';
+import { UserKycTier } from '../users/user.entity';
+import {
+  PatchTransactionLimitDto,
+  UpsertTransactionLimitDto,
+} from './dto/transaction-limit.dto';
 
 @Injectable()
 export class AdminService {
@@ -56,7 +62,28 @@ export class AdminService {
     @InjectRepository(DataRequest)
     private readonly dataRequestRepository: Repository<DataRequest>,
     private readonly auditLogsService: AuditLogsService,
+    private readonly transactionLimitService: TransactionLimitService,
   ) {}
+
+  async listTransactionLimits() {
+    return this.transactionLimitService.listLimits();
+  }
+
+  async upsertTransactionLimit(dto: UpsertTransactionLimitDto) {
+    return this.transactionLimitService.upsertLimit(dto.tier, {
+      dailyLimitUsd: dto.dailyLimitUsd,
+      monthlyLimitUsd: dto.monthlyLimitUsd,
+      singleTxLimitUsd: dto.singleTxLimitUsd,
+    });
+  }
+
+  async patchTransactionLimit(tier: UserKycTier, dto: PatchTransactionLimitDto) {
+    return this.transactionLimitService.upsertLimit(tier, {
+      dailyLimitUsd: dto.dailyLimitUsd,
+      monthlyLimitUsd: dto.monthlyLimitUsd,
+      singleTxLimitUsd: dto.singleTxLimitUsd,
+    });
+  }
 
   async getPlatformMetrics(
     query: MetricsQueryDto = {},
