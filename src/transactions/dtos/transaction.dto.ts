@@ -53,7 +53,7 @@ export class CreateDepositDto {
   @ApiProperty({
     example: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOUJ3UHMNGUAO7UP',
     description:
-      "User’s Stellar public key (G…). Required. Read from GET /users/profile → walletAddress.",
+      'User’s Stellar public key (G…). Required. Read from GET /users/profile → walletAddress.',
   })
   @IsString()
   @IsNotEmpty()
@@ -111,7 +111,7 @@ export class CreateWithdrawalDto {
   @ApiPropertyOptional({
     example: 'GDQP2KPQGKIHYJGXNUIYOMHARUARCA7DJT5FO2FFOOUJ3UHMNGUAO7UP',
     description:
-      'The recipient'"'"'s Stellar public key (G...) or fiat destination address. ' +
+      "The recipient's Stellar public key (G...) or fiat destination address. " +
       'Optional when beneficiaryId is provided - if both are given, beneficiaryId takes precedence. ' +
       'At least one of destinationAddress or beneficiaryId must be provided.',
   })
