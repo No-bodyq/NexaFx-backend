@@ -11,6 +11,7 @@ import {
   Req,
   BadRequestException,
 } from '@nestjs/common';
+import { Audit } from '../common/decorators/audit.decorator';
 import {
   ApiBearerAuth,
   ApiTags,
@@ -69,6 +70,7 @@ export class KycController {
     status: 401,
     description: 'Unauthorized',
   })
+  @Audit('kyc.submission')
   async submitKyc(
     @CurrentUser() user: CurrentUserPayload,
     @UploadedFiles()
@@ -212,6 +214,7 @@ export class KycController {
     status: 403,
     description: 'Forbidden - Admin role required',
   })
+  @Audit('kyc.review')
   async approveKyc(
     @Param('id') id: string,
     @Body() approveKycDto: ApproveKycDto,
@@ -254,6 +257,7 @@ export class KycController {
     status: 403,
     description: 'Forbidden - Admin role required',
   })
+  @Audit('kyc.review')
   async reviewKyc(@Param('id') id: string, @Body() dto: ReviewKycDto) {
     return this.kycService.reviewKyc(id, dto.decision, dto.reason);
   }
