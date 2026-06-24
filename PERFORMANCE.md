@@ -13,32 +13,32 @@ This file outlines the response time benchmarks for core NexaFX API endpoints. A
 
 ### 1. Health Endpoint (`/v1/health`)
 - **Connections**: 100
-- **p50 Latency**: 10 ms
-- **p90 Latency**: 12 ms
-- **p99 Latency**: 15 ms
-- **Average Latency**: 11 ms
-- **Req/Sec**: 90000
-- **Throughput**: 100 MB/sec
+- **p50 Latency**: 11 ms
+- **p90 Latency**: 14 ms
+- **p99 Latency**: 18 ms
+- **Average Latency**: 15.33 ms
+- **Req/Sec**: 6291.82
+- **Throughput**: 7.13 MB/sec
 - **Target**: < 20ms p99 (Status: PASSED)
 
 ### 2. Exchange Rates Endpoint (`/v1/exchange-rates?from=USD&to=NGN`)
 - **Connections**: 100
-- **p50 Latency**: 42 ms
-- **p90 Latency**: 45 ms
-- **p99 Latency**: 51 ms
-- **Average Latency**: 44.36 ms
-- **Req/Sec**: 2226.64
-- **Throughput**: 2.58 MB/sec
+- **p50 Latency**: 14 ms
+- **p90 Latency**: 16 ms
+- **p99 Latency**: 28 ms
+- **Average Latency**: 14.95 ms
+- **Req/Sec**: 6479.46
+- **Throughput**: 7.49 MB/sec
 - **Target**: < 100ms p99 (Status: PASSED)
 
 ### 3. Transactions Endpoint (`/v1/transactions`)
 - **Connections**: 100
-- **p50 Latency**: 100 ms
-- **p90 Latency**: 120 ms
-- **p99 Latency**: 150 ms
-- **Average Latency**: 110 ms
-- **Req/Sec**: 90000
-- **Throughput**: 100 MB/sec
+- **p50 Latency**: 49 ms
+- **p90 Latency**: 59 ms
+- **p99 Latency**: 91 ms
+- **Average Latency**: 51.83 ms
+- **Req/Sec**: 1906.55
+- **Throughput**: 2.08 MB/sec
 - **Target**: < 200ms p99 (Status: PASSED)
 
 ## Verification
