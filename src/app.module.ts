@@ -34,6 +34,7 @@ import { WalletsModule } from './wallets/wallets.module';
 import { RateAlertsModule } from './rate-alerts/rate-alerts.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { UsersModule } from './users/users.module';
+import { StellarModule } from './modules/stellar/stellar.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { UsersModule } from './users/users.module';
       inject: [ConfigService],
     }),
     CommonModule,
+    StellarModule,
     AuthModule,
     CurrenciesModule,
     ExchangeRatesModule,
