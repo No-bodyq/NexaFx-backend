@@ -33,6 +33,7 @@ import { WalletsModule } from './wallets/wallets.module';
 import { RateAlertsModule } from './rate-alerts/rate-alerts.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { UsersModule } from './users/users.module';
+import { StellarModule } from './modules/stellar/stellar.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
@@ -67,6 +68,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
       inject: [ConfigService],
     }),
     CommonModule,
+    StellarModule,
     AuthModule,
     CurrenciesModule,
     ExchangeRatesModule,
