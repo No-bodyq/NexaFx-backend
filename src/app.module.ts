@@ -1,113 +1,42 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { envValidationSchema } from './config/env.validation';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { CurrenciesModule } from './currencies/currencies.module';
-import { ExchangeRatesModule } from './exchange-rates/exchange-rates.module';
-import { CommonModule } from './common/common.module';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
-import { PlanThrottlerGuard } from './common/guards/plan-throttler.guard';
 import { HealthModule } from './health/health.module';
-import { AuditLogsModule } from './audit-logs/audit-logs.module';
-import { NotificationsModule } from './notifications/notifications.module';
-import { TransactionsModule } from './transactions/transaction.module';
-import { BeneficiariesModule } from './beneficiaries/beneficiaries.module';
-import { KycModule } from './kyc/kyc.module';
-import { ScheduledJobsModule } from './scheduled-jobs/scheduled-jobs.module';
-import { ReceiptsModule } from './receipts/receipts.module';
-import { FeesModule } from './fees/fees.module';
-import { PushNotificationsModule } from './push-notifications/push-notifications.module';
-import { FirebaseModule } from './firebase/firebase.module';
-import { AdminModule } from './admin/admin.module';
-import { ReferralsModule } from './referrals/referrals.module';
-import { DaoModule } from './dao/dao.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { GraphQLApiModule } from './graphql/graphql.module';
-import { SuperAdminModule } from './super-admin/super-admin.module';
-import { GatewaysModule } from './gateways/gateways.module';
-import { WebhooksModule } from './webhooks/webhooks.module';
-import { WalletsModule } from './wallets/wallets.module';
-import { RateAlertsModule } from './rate-alerts/rate-alerts.module';
-import { LedgerModule } from './ledger/ledger.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
+      validationSchema: envValidationSchema,
+      validationOptions: {
+        abortEarly: false,
+        allowUnknown: true,
+      },
     }),
-    ScheduleModule.forRoot(),
+    TerminusModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         synchronize:
-          process.env.NODE_ENV !== 'production' &&
-          process.env.NODE_ENV !== 'staging',
+          configService.get<string>('NODE_ENV') !== 'production' &&
+          configService.get<string>('NODE_ENV') !== 'staging',
         ssl:
-          process.env.NODE_ENV === 'production'
+          configService.get<string>('NODE_ENV') === 'production'
             ? { rejectUnauthorized: false }
             : false,
         autoLoadEntities: true,
       }),
-      inject: [ConfigService],
     }),
-    ThrottlerModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => [
-        {
-          ttl: (configService.get<number>('THROTTLE_TTL') ?? 60) * 1000,
-          limit: configService.get<number>('THROTTLE_LIMIT') ?? 100,
-        },
-      ],
-      inject: [ConfigService],
-    }),
-    CommonModule,
-    AuthModule,
-    CurrenciesModule,
-    ExchangeRatesModule,
-    GatewaysModule,
     HealthModule,
-    AuditLogsModule,
-    NotificationsModule,
-    FirebaseModule,
-    TransactionsModule,
-    ReferralsModule,
-    BeneficiariesModule,
-    KycModule,
-    ScheduledJobsModule,
-    ReceiptsModule,
-    FeesModule,
-    PushNotificationsModule,
-    // Rate alerts: user-configured exchange rate notifications
-    RateAlertsModule,
-    AdminModule,
-    SuperAdminModule,
-    // DAO module provides Stellar Soroban contract interaction for reward distribution
-    DaoModule,
-    GraphQLApiModule,
-    WebhooksModule,
-    WalletsModule,
-    LedgerModule,
-    UsersModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PlanThrottlerGuard,
-    },
-  ],
+  providers: [],
 })
 export class AppModule {}
