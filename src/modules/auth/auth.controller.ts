@@ -28,7 +28,7 @@ export class AuthController {
   }
 
   @Public()
-  @Throttle(5, 15 * 60)
+  @Throttle({ default: { limit: 5, ttl: 15 * 60 } })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Authenticate a user and return JWT tokens' })
@@ -39,7 +39,9 @@ export class AuthController {
   @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Validate a refresh token and return a new access token' })
+  @ApiOperation({
+    summary: 'Validate a refresh token and return a new access token',
+  })
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refresh(refreshTokenDto);
   }

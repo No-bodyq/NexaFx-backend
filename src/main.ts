@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import {
   ClassSerializerInterceptor,
+  Logger,
   ValidationPipe,
   VersioningType,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Reflector } from '@nestjs/core';
@@ -16,7 +16,6 @@ import { MulterExceptionFilter } from './common/filters/multer-exception.filter'
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformResponseInterceptor } from './common/interceptors/transform-response.interceptor';
 import helmet from 'helmet';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,7 +40,7 @@ async function bootstrap() {
   );
 
   // Global Filters (order matters: specific before general)
-//   app.useGlobalFilters(new HttpExceptionFilter(), new AllExceptionsFilter());
+  //   app.useGlobalFilters(new HttpExceptionFilter(), new AllExceptionsFilter());
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -74,7 +73,9 @@ async function bootstrap() {
 
   logger.log(`NexaFX API v2 started on port ${port}`);
   logger.log(`Environment: ${environment}`);
-  logger.log(`CORS origins: ${origins.length ? origins.join(', ') : 'none configured'}`);
+  logger.log(
+    `CORS origins: ${origins.length ? origins.join(', ') : 'none configured'}`,
+  );
 }
 
 void bootstrap();
