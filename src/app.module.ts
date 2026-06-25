@@ -36,6 +36,7 @@ import { LedgerModule } from './ledger/ledger.module';
 import { UsersModule } from './users/users.module';
 import { StellarModule } from './modules/stellar/stellar.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { SupportModule } from './modules/support/support.module';
 
 @Module({
   imports: [
@@ -81,6 +82,8 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     ExchangeRatesModule,
     GatewaysModule,
     HealthModule,
+    ScheduleModule.forRoot(),
+    SupportModule,
   ],
   controllers: [AppController],
   providers: [],
