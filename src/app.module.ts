@@ -5,11 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { CurrenciesModule } from './currencies/currencies.module';
 import { ExchangeRatesModule } from './exchange-rates/exchange-rates.module';
 import { CommonModule } from './common/common.module';
-import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { PlanThrottlerGuard } from './common/guards/plan-throttler.guard';
 import { HealthModule } from './health/health.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
@@ -35,6 +34,7 @@ import { RateAlertsModule } from './rate-alerts/rate-alerts.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { UsersModule } from './users/users.module';
 import { StellarModule } from './modules/stellar/stellar.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -61,12 +61,10 @@ import { StellarModule } from './modules/stellar/stellar.module';
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => [
-        {
-          ttl: (configService.get<number>('THROTTLE_TTL') ?? 60) * 1000,
-          limit: configService.get<number>('THROTTLE_LIMIT') ?? 100,
-        },
-      ],
+      useFactory: (configService: ConfigService) => ({
+        ttl: configService.get<number>('THROTTLE_TTL') ?? 60,
+        limit: configService.get<number>('THROTTLE_LIMIT') ?? 100,
+      }),
       inject: [ConfigService],
     }),
     CommonModule,
