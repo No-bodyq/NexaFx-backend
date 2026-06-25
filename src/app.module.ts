@@ -35,7 +35,7 @@ import { RateAlertsModule } from './rate-alerts/rate-alerts.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { UsersModule } from './users/users.module';
 import { StellarModule } from './modules/stellar/stellar.module';
-import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -81,6 +81,27 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
     ExchangeRatesModule,
     GatewaysModule,
     HealthModule,
+    AuditLogsModule,
+    NotificationsModule,
+    FirebaseModule,
+    TransactionsModule,
+    ReferralsModule,
+    BeneficiariesModule,
+    KycModule,
+    ScheduledJobsModule,
+    ReceiptsModule,
+    FeesModule,
+    PushNotificationsModule,
+    RateAlertsModule,
+    AdminModule,
+    SuperAdminModule,
+    DaoModule,
+    GraphQLApiModule,
+    WebhooksModule,
+    WalletsModule,
+    LedgerModule,
+    UsersModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [],

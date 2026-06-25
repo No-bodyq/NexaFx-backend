@@ -4,6 +4,7 @@ import { TransactionsService } from './services/transaction.service';
 import { TransactionVerificationService } from './services/transaction-verification.service';
 import { TransactionsController } from './controllers/transaction.controller';
 import { Transaction } from './entities/transaction.entity';
+import { TransactionCategory } from '../analytics/entities/transaction-category.entity';
 import { CurrenciesModule } from '../currencies/currencies.module';
 import { ExchangeRatesModule } from '../exchange-rates/exchange-rates.module';
 import { BlockchainModule } from '../blockchain/blockchain.module';
@@ -22,7 +23,7 @@ import { TransactionLimitsModule } from './transaction-limits.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Transaction]),
+    TypeOrmModule.forFeature([Transaction, TransactionCategory]),
     CurrenciesModule,
     ExchangeRatesModule,
     BlockchainModule,
