@@ -7,9 +7,10 @@ import {
   Logger,
   ForbiddenException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
+import { RedisService } from '../../common/services/redis.service';
 import {
   Transaction,
   TransactionStatus,
@@ -688,6 +689,7 @@ export class TransactionsService {
         transaction.stellarTxHash = rawResult.hash;
         transaction.status = TransactionStatus.SUCCESS;
         await this.transactionRepository.save(transaction);
+        await this.redisService.del('admin_stats');
 
         await this.updateUserBalance(
           userId,
@@ -895,6 +897,7 @@ export class TransactionsService {
 
       if (verificationResult.status === 'SUCCESS') {
         transaction.status = TransactionStatus.SUCCESS;
+        await this.redisService.del('admin_stats');
 
         if (transaction.type === TransactionType.DEPOSIT) {
           await this.updateUserBalance(
@@ -1140,21 +1143,27 @@ export class TransactionsService {
     const currencyLookup: Record<string, any> = {};
 
     try {
+      const allCurrencies = await this.currenciesService.findAll(false);
+      const currencyMap = new Map(allCurrencies.map((c) => [c.code.toUpperCase(), c]));
       for (const currencyCode of uniqueCurrencies) {
-        // @ts-ignore - Pre-existing type issue
-        const currency = await this.currenciesService.getCurrency(currencyCode);
-        // @ts-ignore - Pre-existing type issue
-        currencyLookup[currencyCode] = {
-          symbol: currency.symbol || currencyCode,
-          displayName: currency.name || currencyCode,
-        };
+        const currency = currencyMap.get(currencyCode.toUpperCase());
+        if (currency) {
+          currencyLookup[currencyCode] = {
+            symbol: currency.symbol || currencyCode,
+            displayName: currency.name || currencyCode,
+          };
+        } else {
+          currencyLookup[currencyCode] = {
+            symbol: currencyCode,
+            displayName: currencyCode,
+          };
+        }
       }
     } catch (error) {
       this.logger.warn(
         `Failed to fetch currency metadata: ${error instanceof Error ? error.message : String(error)}`,
       );
       for (const currencyCode of uniqueCurrencies) {
-        // @ts-ignore - Pre-existing type issue
         currencyLookup[currencyCode] = {
           symbol: currencyCode,
           displayName: currencyCode,

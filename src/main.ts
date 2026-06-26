@@ -24,6 +24,7 @@ import {createAdminQueueAuthMiddleware} from './modules/queues/admin-queue-auth.
 import { QueuesDashboardService } from './modules/queues/queues-dashboard.service';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { join } from 'path';
+import * as compression from 'compression';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -31,6 +32,9 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.use(helmet());
+
+  // Response compression
+  app.use(compression({ threshold: 1024 }));
 
   app.useGlobalPipes(
     new ValidationPipe({
