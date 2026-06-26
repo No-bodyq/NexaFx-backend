@@ -46,6 +46,7 @@ import { WalletsService } from '../../wallets/wallets.service';
 import { EncryptionService } from '../../common/services/encryption.service';
 import { LedgerService } from '../../ledger/services/ledger.service';
 import { TransactionLimitService } from './transaction-limit.service';
+import { RedisService } from '../../modules/redis/redis.service';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -768,6 +769,13 @@ export class TransactionsService {
     mode: 'strict-send' | 'strict-receive' = 'strict-send',
   ): Promise<any> {
     const cacheKey = `${fromCurrency}-${toCurrency}-${amount}-${mode}`;
+    const redisKey = this.redisService.key('quotes', cacheKey);
+    const redisCached = await this.redisService.getJson<any>(redisKey);
+    if (redisCached) {
+      this.logger.debug(`Returning Redis cached swap preview for ${cacheKey}`);
+      return redisCached;
+    }
+
     const cached = this.swapPreviewCache.get(cacheKey);
 
     if (cached && cached.expiry > Date.now()) {
@@ -823,10 +831,12 @@ export class TransactionsService {
       };
     });
 
-    // Cache results for 10 seconds
+    await this.redisService.setJson(redisKey, results, 30);
+
+    // Local fallback cache mirrors Redis TTL for single-instance degradation.
     this.swapPreviewCache.set(cacheKey, {
       data: results,
-      expiry: Date.now() + 10000,
+      expiry: Date.now() + 30000,
     });
 
     return results;
