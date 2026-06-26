@@ -46,6 +46,7 @@ import { UsersModule } from './users/users.module';
 import { StellarModule } from './modules/stellar/stellar.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { SupportModule } from './modules/support/support.module';
 import { RedisModule } from './modules/redis/redis.module';
 import { REDIS_CLIENT } from './modules/redis/redis.constants';
 import { QueuesModule } from './modules/queues/queues.module';
@@ -143,6 +144,8 @@ import { StorageModule } from './modules/storage/storage.module';
     ExchangeRatesModule,
     GatewaysModule,
     HealthModule,
+    ScheduleModule.forRoot(),
+    SupportModule,
     AuditLogsModule,
     NotificationsModule,
     FirebaseModule,
