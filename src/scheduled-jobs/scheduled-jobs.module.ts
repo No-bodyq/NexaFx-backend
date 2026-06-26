@@ -16,6 +16,7 @@ import { WebhooksModule } from '../webhooks/webhooks.module';
 import { AuditLogsModule } from '../audit-logs/audit-logs.module';
 import { AnalyticsModule } from '../analytics/analytics.module';
 import { SanctionsModule } from '../sanctions/sanctions.module';
+import { LoansModule } from '../loans/loans.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SanctionsModule } from '../sanctions/sanctions.module';
     AuditLogsModule,
     AnalyticsModule,
     SanctionsModule,
+    LoansModule,
   ],
   providers: [ScheduledJobsService],
   exports: [ScheduledJobsService],
