@@ -28,6 +28,7 @@ import { DataRequest } from '../users/entities/data-request.entity';
 import { RedisService } from '../common/services/redis.service';
 import { DataSource } from 'typeorm';
 import { AnalyticsService } from '../analytics/analytics.service';
+import { SanctionsService } from '../sanctions/sanctions.service';
 
 @Injectable()
 export class ScheduledJobsService {
@@ -58,6 +59,7 @@ export class ScheduledJobsService {
     private readonly ledgerVerificationService: LedgerVerificationService,
     private readonly analyticsService: AnalyticsService,
     private readonly redisService: RedisService,
+    private readonly sanctionsService: SanctionsService,
   ) {
     // Truncate hostname to 255 characters to match DB column constraint
     this.instanceId = os.hostname().substring(0, 255);
@@ -804,6 +806,42 @@ export class ScheduledJobsService {
       this.logger.error(
         '[Scheduled Job] Fatal error in idempotency records cleanup:',
         error,
+      );
+    }
+  }
+
+  /**
+   * Sync OFAC SDN list every Sunday at 02:00 UTC
+   */
+  @Cron('0 2 * * 0')
+  async syncOfacList(): Promise<void> {
+    this.logger.log('[Scheduled Job] Starting weekly OFAC SDN list sync');
+    try {
+      const count = await this.sanctionsService.syncOfacList();
+      this.logger.log(`[Scheduled Job] OFAC sync complete: ${count} entries`);
+    } catch (error) {
+      this.logger.error(
+        '[Scheduled Job] OFAC sync failed:',
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  }
+
+  /**
+   * Re-screen all approved KYC users on the 1st of every month at 03:00 UTC
+   */
+  @Cron('0 3 1 * *')
+  async rescreenAllUsers(): Promise<void> {
+    this.logger.log('[Scheduled Job] Starting monthly KYC re-screening');
+    try {
+      const result = await this.sanctionsService.rescreenAllUsers();
+      this.logger.log(
+        `[Scheduled Job] Re-screening complete: ${result.processed} processed, ${result.failed} failed`,
+      );
+    } catch (error) {
+      this.logger.error(
+        '[Scheduled Job] Re-screening failed:',
+        error instanceof Error ? error.message : String(error),
       );
     }
   }
