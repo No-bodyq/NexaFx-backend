@@ -36,6 +36,7 @@ import { RateAlertsModule } from './rate-alerts/rate-alerts.module';
 import { LedgerModule } from './ledger/ledger.module';
 import { UsersModule } from './users/users.module';
 import { OrganisationsModule } from './organisations/organisations.module';
+import { SanctionsModule } from './sanctions/sanctions.module';
 import { LoansModule } from './loans/loans.module';
 
 @Module({
@@ -101,6 +102,7 @@ import { LoansModule } from './loans/loans.module';
     LedgerModule,
     UsersModule,
     OrganisationsModule,
+    SanctionsModule,
     LoansModule,
   ],
   controllers: [AppController],
